@@ -19,6 +19,13 @@ To use the plugin, simply type the slash command `/Link To HTML` followed by a U
 
 If you make any modifications to the plugin's source code, you will need to rebuild it using:
 
+Don't forget to npm install!
+```bash
+npm install 
+```
+
+then for your changes to reflect: 
+
 ```bash
 npm run build
 ```
