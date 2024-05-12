@@ -54,7 +54,7 @@ function App() {
   const appState = useAppStateStore();
   return (
     <SWRConfig value={{ provider: localStorageProvider }}>
-      {appState.value.type === 'hovering' && <HoverLinkPreview />}
+      {/* {appState.value.type === 'hovering' && <HoverLinkPreview />} */}
       {appState.value.type === 'prompt' && <Prompt />}
     </SWRConfig>
   );

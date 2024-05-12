@@ -5,7 +5,7 @@ import { getLinkPreview } from "link-preview-js";
 
 export const getOpenGraphMetadata = async (url: string) => {
   const data = await getLinkPreview(Array.isArray(url) ? url[0] : url, {
-    timeout: 3000,
+    timeout: 5000,
     // TODO: this is not doable in the browser context
     // headers: {
     //   "user-agent": "googlebot",

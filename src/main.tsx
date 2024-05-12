@@ -8,7 +8,9 @@ import { registerMacro as registerMacroRender } from "./macro";
 
 function main() {
   registerMacroRender();
-
+  console.log(
+    'Build 1.0.0'
+  )
   if (top) {
     // FIXME: the following cannot use "createRoot" API yet due to
     // https://github.com/vercel/swr/issues/1904

@@ -12,7 +12,7 @@ import {
   getOpenGraphMetadata,
   toLinkPreviewMetadata,
 } from "./use-link-preview-metadata";
-import { urlRegex } from "./utils";
+import { correctURL, urlRegex } from "./utils";
 
 const macroPrefix = ":linkpreview";
 
@@ -55,53 +55,89 @@ export const registerMacro = () => {
     }
   });
 
-  // This command only support to replace the whole block for now
+  // logseq.Editor.registerSlashCommand(
+  //   "Link to Block",
+  //   async () => {
+  //     const id = await logseq.Editor.getCurrentBlock();
+  //     const url = await waitForPrompt("Provide a URL");
+  //     if (!urlRegex.test(url)) {
+  //       logseq.App.showMsg("This does not seem to be a valid URL", "warning");
+  //     } else if (id) {
+  //       const loadingMarker = `Fetching meta data of ${url}...`;
+  //       await logseq.Editor.insertAtEditingCursor(loadingMarker);
+  //       const d = delay(1000);
+  //       try {
+  //         const meta: any = await getOpenGraphMetadata(url);
+  //         // Define each line as a separate block
+  //         console.log(meta)
+  //         const blocks = [
+  //           `${meta?.title || 'Title is not available'} #web_card`,
+  //           `**Image URL:** ![](${meta?.images?.[0] || 'Image is not available'})`,
+  //           `**Description:** ${meta?.description || 'Description is not available'}`,
+  //           `**Favicon img URL:** ![](${meta?.favicons?.[0] || 'Favicon is not available'})`,
+  //           `**URL:** [${url}](${url})`
+  //         ];
+  
+  //         // Remove the loading marker
+  //         await d;
+  //         const blockContent = await logseq.Editor.getBlock(id.uuid);
+  //         if (blockContent && blockContent.content.includes(loadingMarker)) {
+  //           await logseq.Editor.updateBlock(id.uuid, blockContent.content.replace(loadingMarker, blocks[0]));
+  //           // Insert each additional block as a child
+  //           for (let i = 1; i < blocks.length; i++) {
+  //             await logseq.Editor.insertBlock(id.uuid, blocks[i], { sibling: false });
+  //           }
+  //         }
+  //         else{
+  //           console.log('lol')
+  //         }
+  //       } catch (err) {
+  //         console.error("Failed to get metadata for URL", err);
+  //         await logseq.Editor.updateBlock(id.uuid, "Failed to get metadata for URL");
+  //       }
+  //     }
+  //   }
+  // );
+  
   logseq.Editor.registerSlashCommand(
-    "[Link Preview] Convert current link to a Link Card 🪧",
-    async () => {
-      const maybeUrl = (await logseq.Editor.getEditingBlockContent()).trim();
-      const id = await logseq.Editor.getCurrentBlock();
-
-      if (urlRegex.test(maybeUrl) && id) {
-        const newContent = `{{renderer ${macroPrefix},${maybeUrl}}}`;
-        logseq.Editor.updateBlock(id.uuid, newContent);
-      } else {
-        logseq.App.showMsg(
-          "The block content does not seem to be a valid URL",
-          "warning"
-        );
-      }
-    }
-  );
-
-  logseq.Editor.registerSlashCommand(
-    "[Link Preview] Insert a static Link Card (will be very long)",
+    "Link to HTML",
     async () => {
       const id = await logseq.Editor.getCurrentBlock();
-      const url = await waitForPrompt("Give a valid URL");
-      if (!urlRegex.test(url)) {
-        logseq.App.showMsg("This does not seem to be a valid URL", "warning");
+      const url = await waitForPrompt("Provide a URL");
+      const processedUrl = correctURL(url)
+      if (!processedUrl?.isValid) {
+        logseq.App.showMsg(processedUrl?.message, "warning");
       } else if (id) {
-        if (id && urlRegex.test(url)) {
-          const marker = `Fetching metadata for ${url} ... ⏳`;
+        const correctedUrl = processedUrl?.correctedURL
+        if (id && processedUrl?.correctedURL) {
+          const marker = `Fetching metadata for ${correctedUrl}..`;
           await logseq.Editor.insertAtEditingCursor(marker);
           await logseq.Editor.exitEditingMode();
           let res = "";
-          const d = delay(1000); // wait at least 1s
+          const d = delay(100); // wait at least 1s
           try {
-            const meta = await getOpenGraphMetadata(url);
+            const meta: any = await getOpenGraphMetadata(correctedUrl);
+            console.log(meta)
             res = ReactDOMServer.renderToStaticMarkup(
-              <>
-                <LinkCard data={toLinkPreviewMetadata(url, null, meta)} />
-                <style>{minStyle}</style>
-              </>
-            );
-            res = res.replace(
-              'inject-placeholder="true"',
-              'onmousedown="(function(e){e.stopPropagation();})(event)"'
+              <div style={{ border: "1px solid #333", maxWidth: "500px", borderRadius: "10px", overflow: "hidden", position: "relative", padding: "10px", fontFamily: "sans-serif" }}>
+              <div style={{ display: "flex", marginBottom: "5px" }}>
+                  <img style={{ width: "100%", height: "auto", maxWidth: "120px", marginRight: "5px" }} src={meta?.images?.[0] || 'Image not available'} alt="Dynamic Image" />
+                  <div>
+                      <h1 style={{ fontSize: "1.0em", margin: "0" }}>{meta?.title || 'Title not available'}</h1>
+                      <p style={{ fontSize: "0.8em", lineHeight: "1.2em", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {meta?.description || 'Description not available'}
+                      </p>
+                      <a style={{ fontSize: "0.7em", color: "#666" }} href={correctedUrl}>{correctedUrl}</a>
+                  </div>
+              </div>
+              <img style={{ maxWidth: "20px", position: "absolute", bottom: "5px", right: "5px", opacity: 0.25 }} src={meta?.favicons?.[0] || 'Favicon not available'} alt="Favicon" />
+          </div>
+          
+          
             );
           } catch (err) {
-            res = "Failed to get metadata for " + url;
+            console.log(err)
+            res = "Failed to get metadata for " + correctedUrl;
           }
           await d;
           // It seems Logseq does not have the latest content in the API too soon
@@ -119,4 +155,8 @@ export const registerMacro = () => {
       }
     }
   );
+
+
+  
+  
 };
