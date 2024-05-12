@@ -1,48 +1,38 @@
-# Logseq Plugin Link Preview
+# Logseq Plugin: Link to HTML
 
-A simple plugin to show basic link information (based on [OpenGraph Protocol](https://ogp.me/)) for external links in Logseq.
+This plugin enhances your Logseq experience by converting web links into rich HTML formatted cards directly within your notes. Based on a fork of the [Logseq Plugin Link Preview](https://github.com/logseq/logseq-plugin-samples/tree/master/logseq-plugin-link-preview).
 
-By default when it is enabled, when you hovering any external link in Logseq, it will show the link preview.
-Also this plugin will register a `Convert to Link Card` command for you to convert the link to a link card.
+## Description
 
-![](hover-demo.png)
+The "Link to HTML" plugin for Logseq allows users to fetch and display detailed web page information such as titles, images, descriptions, and more directly within their notes instead of a renderer in your notes file. This enriches the note-taking and reference experience by embedding rich content previews that can be customized directly in Logseq.
 
-## Features
+## How to Use
 
-- Show link preview when hovering any external link in Logseq
-- Convert the link to a link card when you use the `Convert to Link Card` command
-- Cache the results locally
-- Light & dark theme
+To use the plugin, simply type the slash command `/Link To HTML` followed by a URL. The plugin will fetch the relevant metadata from the URL and render it as a stylized HTML card in your Logseq journal.
 
-## Demo
-
-![](./demo.gif)
-
-## How does this plugin work?
-
-There are two modes of this plugin:
-- Hovering mode
-- Macro mode
-
-The two modes are working very differently, but they codes are mostly shared.
-
-### Hovering Mode
-
-It will register `mouseenter` and `mouseleave` events on all external links in the main document of Logseq. Note, in this step this plugin uses a unsafe `top` context of the main document, which might not work in the future.
-
-In the listener, the plugin will extract the `href` attribute of the link and send a request to an API server to get the link information (the OpenGraph metadata).
-
-Once the api returns with the link metadata (e.g., title, description, image), the plugin will
-
-- render them in the plugin iframe
-- resize the iframe and move its position to the hovering link
-
-### Macro Mode
-
-Typically, user will use slash command to create a custom renderer Marco `:linkpreview` with the URL as the argument
-
-```html
-{{renderer :linkpreview,https://google.com}}
+**Example Usage:**
+```
+/Link To HTML then a prompt will show up and input the link https://example.com
 ```
 
-When it is rendered, the `logseq.App.onMacroRendererSlotted` hook will fetch the link information from the API server and render it with `ReactDomServer.renderToString` method into the slot. The plugin will register the styles into the global context.
+## Making Changes
+
+If you make any modifications to the plugin's source code, you will need to rebuild it using:
+
+```bash
+npm run build
+```
+
+After rebuilding, navigate to the Logseq plugins section, and if the plugin is already added, press "Reload" to apply the new changes. If it is not yet added, choose "Load unpacked plugin" and select your plugin's directory.
+
+## Additional Feature
+
+- **Auto-correction of URLs:** The plugin automatically corrects common URL input errors, ensuring that links are always formatted correctly.
+
+## Installation
+
+To install the plugin:
+
+1. Download the plugin from the official repository.
+2. Open Logseq and navigate to the plugins section.
+3. Choose "Load unpacked plugin" and select the folder where you have saved the plugin.
