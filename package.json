@@ -1,5 +1,5 @@
 {
-  "name": "logseq-plugin-link-embed",
+  "name": "logseq-plugin-link-to-html",
   "version": "1.0.0",
   "main": "dist/index.html",
   "scripts": {
@@ -33,6 +33,6 @@
     "windicss": "3.5.6"
   },
   "logseq": {
-    "id": "jdcaacbay-logseq-plugin-link-embed"
+    "id": "jdcaacbay-logseq-plugin-link-to-html"
   }
 }
