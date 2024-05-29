@@ -6,6 +6,7 @@ import { LinkCard } from "./LinkCard";
 import { waitForPrompt } from "./store";
 import rawStyle from "./style.css";
 import minStyle from "./min-style.tcss?raw";
+import customStyle from "./custom.css"
 
 import {
   fetchLinkPreviewMetadata,
@@ -28,6 +29,8 @@ export const registerMacro = () => {
     },
   });
   logseq.provideStyle(rawStyle);
+  logseq.provideStyle(customStyle);
+
   logseq.App.onMacroRendererSlotted(async ({ payload, slot }) => {
     const [type, url] = payload.arguments;
     if (!type?.startsWith(macroPrefix)) {
@@ -100,7 +103,7 @@ export const registerMacro = () => {
   // );
   
   logseq.Editor.registerSlashCommand(
-    "Link to HTML",
+    "url",
     async () => {
       const id = await logseq.Editor.getCurrentBlock();
       const url = await waitForPrompt("Provide a URL");
@@ -119,19 +122,20 @@ export const registerMacro = () => {
             const meta: any = await getOpenGraphMetadata(correctedUrl);
             console.log(meta)
             res = ReactDOMServer.renderToStaticMarkup(
-              <div style={{ border: "1px solid #333", maxWidth: "500px", borderRadius: "10px", overflow: "hidden", position: "relative", padding: "10px", fontFamily: "sans-serif" }}>
-              <div style={{ display: "flex", marginBottom: "5px" }}>
-                  <img style={{ width: "100%", height: "auto", maxWidth: "120px", marginRight: "5px" }} src={meta?.images?.[0] || 'Image not available'} alt="Dynamic Image" />
+              <div className="my-plugin-container">
+              <div className="my-plugin-header">
+                  <img className="my-plugin-dynamic-image" src={meta?.images?.[0] || 'Image not available'} alt="Dynamic Image" />
                   <div>
-                      <h1 style={{ fontSize: "1.0em", margin: "0" }}>{meta?.title || 'Title not available'}</h1>
-                      <p style={{ fontSize: "0.8em", lineHeight: "1.2em", overflow: "hidden", textOverflow: "ellipsis" }}>
-                          {meta?.description || 'Description not available'}
-                      </p>
-                      <a style={{ fontSize: "0.7em", color: "#666" }} href={correctedUrl}>{correctedUrl}</a>
+                      <h1 className="my-plugin-title">{meta?.title || 'Title not available'}</h1>
+                      <p className="my-plugin-description">{meta?.description || 'Description not available'}</p>
+                      <a className="my-plugin-link" href={correctedUrl}>{correctedUrl}</a>
                   </div>
               </div>
-              <img style={{ maxWidth: "20px", position: "absolute", bottom: "5px", right: "5px", opacity: 0.25 }} src={meta?.favicons?.[0] || 'Favicon not available'} alt="Favicon" />
+              <img className="my-plugin-favicon" src={meta?.favicons?.[0] || 'Favicon not available'} alt="Favicon" />
           </div>
+
+          
+          
           
           
             );

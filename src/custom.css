@@ -1,0 +1,52 @@
+.my-plugin-container {
+  border: 1px solid #333 !important;
+  max-width: 500px !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  padding: 10px !important;
+  font-family: sans-serif !important;
+  color: #fff !important;
+  box-sizing: border-box !important;
+}
+
+.my-plugin-header {
+  display: flex !important;
+  margin-bottom: 5px !important;
+  align-items: flex-start !important;
+}
+
+.my-plugin-dynamic-image {
+  flex-shrink: 0 !important;
+  width: 120px !important;
+  height: auto !important;
+  margin-right: 10px !important;
+}
+
+.my-plugin-title {
+  font-size: 1.0em !important;
+  margin: 0 !important;
+}
+
+.my-plugin-description {
+  font-size: 0.8em !important;
+  line-height: 1.2em !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-height: 2.4em !important;
+  margin: 5px 0 !important;
+}
+
+.my-plugin-link {
+  font-size: 0.7em !important;
+  color: #666 !important;
+  word-break: break-all !important;
+}
+
+.my-plugin-favicon {
+  max-width: 20px !important;
+  position: absolute !important;
+  bottom: 10px !important;
+  right: 10px !important;
+  opacity: 0.25 !important;
+}
